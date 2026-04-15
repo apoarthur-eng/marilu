@@ -1,0 +1,263 @@
+import { useState } from "react";
+
+const questions = [
+  {
+    q: "Qual estratégia de marketing digital é mais eficaz para vender imóveis de alto padrão?",
+    opts: ["Fotos profissionais + tours virtuais 3D", "Apenas anúncios em jornal impresso", "Panfletos na rua", "Grupos de WhatsApp genéricos"],
+    correct: 0,
+    feedback: "Exato! Imóveis de alto padrão exigem apresentação visual impecável. Tours 3D e fotos profissionais aumentam o interesse em até 80%!"
+  },
+  {
+    q: "O que é 'funil de vendas imobiliário'?",
+    opts: ["Um equipamento de construção", "Etapas: atração → interesse → decisão → compra", "Uma técnica de decoração de interiores", "Um relatório financeiro do mês"],
+    correct: 1,
+    feedback: "Certo! O funil guia o cliente da descoberta até a assinatura do contrato. Entender cada etapa é essencial para o marketing!"
+  },
+  {
+    q: "Qual plataforma é mais indicada para anunciar imóveis no Brasil hoje?",
+    opts: ["Fax e catálogo físico", "ZAP Imóveis e OLX", "Apenas TV aberta", "Rádio AM"],
+    correct: 1,
+    feedback: "Isso aí! ZAP Imóveis, OLX e Viva Real são os portais líderes no Brasil. Presença digital é obrigatória!"
+  },
+  {
+    q: "O que significa 'persona' no marketing imobiliário?",
+    opts: ["O nome do dono da imobiliária", "Perfil fictício do cliente ideal com hábitos e necessidades", "Um tipo de contrato de compra", "Um software de gestão"],
+    correct: 1,
+    feedback: "Perfeito! Conhecer a persona ajuda a criar campanhas certeiras. Família jovem? Aposentado? Investidor? Cada um quer algo diferente!"
+  },
+  {
+    q: "Qual é o objetivo do 'marketing de conteúdo' para uma imobiliária?",
+    opts: ["Vender direto sem estratégia", "Educar o público, gerando confiança e leads qualificados", "Publicar só fotos dos imóveis", "Fazer promoções com descontos agressivos"],
+    correct: 1,
+    feedback: "Ótimo! Conteúdo relevante posiciona a imobiliária como autoridade e atrai clientes qualificados."
+  },
+  {
+    q: "O que é 'geração de leads' no marketing imobiliário?",
+    opts: ["Contratar novos corretores", "Atrair contatos de potenciais compradores ou locatários", "Gerar relatórios contábeis", "Listar imóveis disponíveis no estoque"],
+    correct: 1,
+    feedback: "Correto! Lead é um potencial cliente. Gerar leads qualificados é o coração do marketing imobiliário moderno!"
+  },
+  {
+    q: "Qual métrica indica melhor o sucesso de uma campanha online para imóveis?",
+    opts: ["Número de curtidas na foto", "CPL (custo por lead) e taxa de conversão em visitas", "Quantidade de seguidores novos", "Número de impressões totais"],
+    correct: 1,
+    feedback: "Brilhante! Curtidas são vaidade. O que importa é quantos leads qualificados vieram, a que custo, e quantos visitaram o imóvel!"
+  }
+];
+
+function MariaSVG({ size = 54 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 54 54" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="27" cy="27" rx="27" ry="27" fill="#f5cba7"/>
+      <ellipse cx="27" cy="22" rx="13" ry="14" fill="#f5cba7"/>
+      <ellipse cx="27" cy="13" rx="14" ry="9" fill="#f0c040"/>
+      <rect x="13" y="13" width="5" height="22" rx="3" fill="#e8b820"/>
+      <rect x="36" y="13" width="5" height="22" rx="3" fill="#e8b820"/>
+      <ellipse cx="27" cy="10" rx="10" ry="5" fill="#f5d060"/>
+      <ellipse cx="21" cy="22" rx="2" ry="2.2" fill="#3e2723"/>
+      <ellipse cx="33" cy="22" rx="2" ry="2.2" fill="#3e2723"/>
+      <path d="M22 29 Q27 34 32 29" stroke="#a0522d" strokeWidth="1.2" fill="none"/>
+      <circle cx="13" cy="25" r="2" fill="#f4c430"/>
+      <circle cx="41" cy="25" r="2" fill="#f4c430"/>
+      <path d="M21 34 Q27 38 33 34" stroke="#f4c430" strokeWidth="1.5" fill="none"/>
+    </svg>
+  );
+}
+
+export default function App() {
+  const [current, setCurrent] = useState(-1);
+  const [score, setScore] = useState(0);
+  const [selected, setSelected] = useState(null);
+  const [done, setDone] = useState(false);
+
+  const q = current >= 0 && current < questions.length ? questions[current] : null;
+
+  function start() { setCurrent(0); setScore(0); setSelected(null); setDone(false); }
+
+  function answer(idx) {
+    if (selected !== null) return;
+    setSelected(idx);
+    if (idx === q.correct) setScore(s => s + 100 + current * 10);
+  }
+
+  function next() {
+    if (current + 1 >= questions.length) { setDone(true); }
+    else { setCurrent(c => c + 1); setSelected(null); }
+  }
+
+  const btnStyle = (idx) => ({
+    background: selected === null ? "#162c47" : idx === q.correct ? "#0d3b1a" : idx === selected ? "#3b0d0d" : "#162c47",
+    border: `1.5px solid ${selected === null ? "#4a7ab5" : idx === q.correct ? "#4caf50" : idx === selected ? "#e53935" : "#4a7ab5"}`,
+    color: selected === null ? "#ffffff" : idx === q.correct ? "#a5ffb0" : idx === selected ? "#ffb0b0" : "#7a9ab5",
+    borderRadius: 8, padding: "12px 14px", fontSize: 14, cursor: selected === null ? "pointer" : "default",
+    textAlign: "left", lineHeight: 1.45, fontWeight: 500, transition: "all 0.15s", fontFamily: "sans-serif"
+  });
+
+  return (
+    <div style={{ background: "#0d1b2a", minHeight: "100vh", fontFamily: "sans-serif" }}>
+
+      {/* ISOMETRIC ROOM */}
+      <div style={{ position: "relative", width: "100%" }}>
+        <svg width="100%" viewBox="0 0 680 290" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="340,20 620,155 340,285 60,155" fill="#1e3a5f"/>
+          <line x1="340" y1="20" x2="340" y2="285" stroke="#1a3255" strokeWidth="1"/>
+          <line x1="60" y1="155" x2="620" y2="155" stroke="#1a3255" strokeWidth="1"/>
+          <polygon points="60,155 340,20 340,0 60,125" fill="#0d2240"/>
+          <polygon points="340,20 620,155 620,125 340,0" fill="#112a4e"/>
+          <rect x="255" y="3" width="170" height="22" rx="4" fill="#f4c430"/>
+          <text x="340" y="18" textAnchor="middle" fontSize="9" fill="#0d1b2a" fontWeight="bold" fontFamily="sans-serif">FUHRO SOUTO IMOBILIÁRIA</text>
+          <rect x="375" y="12" width="60" height="44" rx="2" fill="#2196f3" fillOpacity="0.25" stroke="#90caf9" strokeWidth="1"/>
+          <line x1="405" y1="12" x2="405" y2="56" stroke="#90caf9" strokeWidth="0.8"/>
+          <line x1="375" y1="34" x2="435" y2="34" stroke="#90caf9" strokeWidth="0.8"/>
+          <polygon points="110,175 210,130 255,155 155,200" fill="#8b5c2a"/>
+          <polygon points="110,175 110,188 210,143 210,130" fill="#6b4420"/>
+          <polygon points="210,130 255,155 255,168 210,143" fill="#a0692f"/>
+          <rect x="165" y="127" width="32" height="23" rx="2" fill="#0a1628" stroke="#f4c430" strokeWidth="1.2"/>
+          <rect x="167" y="129" width="28" height="17" rx="1" fill="#0d2240"/>
+          <text x="181" y="141" textAnchor="middle" fontSize="6.5" fill="#f4c430" fontFamily="monospace" fontWeight="bold">FS</text>
+          <rect x="179" y="150" width="5" height="3" rx="1" fill="#888"/>
+          <rect x="174" y="153" width="20" height="7" rx="1" fill="#1a1a2e" stroke="#556" strokeWidth="0.5"/>
+          <rect x="148" y="158" width="11" height="13" rx="2" fill="#fff" stroke="#ccc" strokeWidth="0.5"/>
+          <rect x="149" y="159" width="9" height="5" rx="1" fill="#7b4f2e" fillOpacity="0.8"/>
+          <polygon points="450,95 545,140 545,225 450,180" fill="#1d3d66"/>
+          <polygon points="450,95 462,89 557,134 545,140" fill="#254d7a"/>
+          <rect x="455" y="107" width="6" height="28" rx="1" fill="#e53935"/>
+          <rect x="463" y="103" width="5" height="32" rx="1" fill="#1976d2"/>
+          <rect x="470" y="110" width="7" height="25" rx="1" fill="#f4c430"/>
+          <rect x="479" y="106" width="5" height="29" rx="1" fill="#43a047"/>
+          <rect x="486" y="112" width="6" height="23" rx="1" fill="#9c27b0"/>
+          <line x1="455" y1="142" x2="498" y2="142" stroke="#0d1b2a" strokeWidth="1.5"/>
+          <rect x="457" y="147" width="5" height="22" rx="1" fill="#e53935"/>
+          <rect x="465" y="150" width="7" height="19" rx="1" fill="#f4c430"/>
+          <rect x="474" y="145" width="5" height="24" rx="1" fill="#1976d2"/>
+          <rect x="84" y="150" width="14" height="18" rx="2" fill="#8b5c2a"/>
+          <ellipse cx="91" cy="144" rx="12" ry="10" fill="#2e7d32"/>
+          <ellipse cx="85" cy="139" rx="8" ry="7" fill="#388e3c"/>
+          <ellipse cx="97" cy="141" rx="9" ry="8" fill="#43a047"/>
+          <ellipse cx="90" cy="136" rx="6" ry="5" fill="#66bb6a"/>
+          {/* Maria Luiza loira */}
+          <rect x="225" y="188" width="9" height="16" rx="2" fill="#1a237e"/>
+          <rect x="238" y="188" width="9" height="16" rx="2" fill="#1a237e"/>
+          <ellipse cx="229" cy="204" rx="5" ry="2.5" fill="#3e2723"/>
+          <ellipse cx="243" cy="204" rx="5" ry="2.5" fill="#3e2723"/>
+          <rect x="222" y="157" width="28" height="33" rx="4" fill="#ffffff"/>
+          <polygon points="222,157 229,157 226,190 222,190" fill="#1565c0" fillOpacity="0.9"/>
+          <polygon points="250,157 243,157 246,190 250,190" fill="#1565c0" fillOpacity="0.9"/>
+          <rect x="230" y="157" width="12" height="9" rx="2" fill="#f5cba7"/>
+          <ellipse cx="236" cy="150" rx="13" ry="14" fill="#f5cba7"/>
+          <ellipse cx="236" cy="140" rx="14" ry="8" fill="#f0c040"/>
+          <rect x="222" y="141" width="5" height="20" rx="3" fill="#e8b820"/>
+          <rect x="249" y="141" width="5" height="20" rx="3" fill="#e8b820"/>
+          <ellipse cx="236" cy="137" rx="10" ry="5" fill="#f5d060"/>
+          <ellipse cx="230" cy="150" rx="1.8" ry="2" fill="#3e2723"/>
+          <ellipse cx="242" cy="150" rx="1.8" ry="2" fill="#3e2723"/>
+          <path d="M230 157 Q236 162 242 157" stroke="#a0522d" strokeWidth="1" fill="none"/>
+          <circle cx="223" cy="153" r="1.8" fill="#f4c430"/>
+          <circle cx="249" cy="153" r="1.8" fill="#f4c430"/>
+          <path d="M229 166 Q236 171 243 166" stroke="#f4c430" strokeWidth="1.3" fill="none"/>
+          <polygon points="248,143 262,133 257,143" fill="#f4c430"/>
+        </svg>
+
+        {/* HUD */}
+        <div style={{ position:"absolute", top:10, left:10, right:10, display:"flex", justifyContent:"space-between", alignItems:"center", pointerEvents:"none" }}>
+          <div style={{ background:"rgba(0,0,0,0.75)", border:"1.5px solid #f4c430", borderRadius:8, padding:"4px 14px", color:"#f4c430", fontSize:13, fontWeight:600 }}>
+            Pontos: {score}
+          </div>
+          <div style={{ color:"#fff", fontSize:13, fontWeight:600, background:"rgba(0,0,0,0.75)", borderRadius:8, padding:"4px 14px" }}>
+            Fuhro Souto Imobiliária
+          </div>
+          {current >= 0 && !done && (
+            <div style={{ background:"rgba(0,0,0,0.75)", border:"1.5px solid #f4c430", borderRadius:8, padding:"4px 14px", color:"#f4c430", fontSize:13, fontWeight:600 }}>
+              {current+1}/{questions.length}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* GAME AREA */}
+      <div style={{ padding:"0 12px 24px" }}>
+
+        {/* Intro */}
+        {current === -1 && (
+          <div style={{ background:"#0d2240", border:"2px solid #f4c430", borderRadius:12, padding:"14px 16px" }}>
+            <div style={{ display:"flex", gap:12, alignItems:"flex-start" }}>
+              <div style={{ width:56, height:56, borderRadius:"50%", border:"2px solid #f4c430", overflow:"hidden", flexShrink:0 }}>
+                <MariaSVG size={56}/>
+              </div>
+              <div>
+                <div style={{ color:"#f4c430", fontSize:12, fontWeight:600, marginBottom:4 }}>Maria Luiza — Gerente de Marketing</div>
+                <div style={{ color:"#ffffff", fontSize:14, lineHeight:1.55 }}>
+                  Olá! Eu sou a Maria Luiza, gerente de marketing da <strong style={{color:"#f4c430"}}>Fuhro Souto Imobiliária</strong>. Vamos testar seus conhecimentos de marketing imobiliário? Responda corretamente e ganhe pontos!
+                </div>
+              </div>
+            </div>
+            <button onClick={start} style={{ marginTop:14, width:"100%", padding:"11px", background:"#f4c430", color:"#0d1b2a", border:"none", borderRadius:8, fontSize:15, fontWeight:700, cursor:"pointer" }}>
+              Começar o desafio →
+            </button>
+          </div>
+        )}
+
+        {/* Question */}
+        {current >= 0 && !done && q && (
+          <>
+            <div style={{ background:"#0d2240", border:"2px solid #f4c430", borderRadius:12, padding:"14px 16px", marginBottom:10 }}>
+              <div style={{ display:"flex", gap:12, alignItems:"flex-start" }}>
+                <div style={{ width:52, height:52, borderRadius:"50%", border:"2px solid #f4c430", overflow:"hidden", flexShrink:0 }}>
+                  <MariaSVG size={52}/>
+                </div>
+                <div>
+                  <div style={{ color:"#f4c430", fontSize:12, fontWeight:600, marginBottom:4 }}>
+                    Maria Luiza — Pergunta {current+1} de {questions.length}
+                  </div>
+                  <div style={{ color:"#ffffff", fontSize:14, lineHeight:1.6, fontWeight:500 }}>{q.q}</div>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, marginBottom:10 }}>
+              {q.opts.map((o, i) => (
+                <button key={i} onClick={() => answer(i)} style={btnStyle(i)}>{o}</button>
+              ))}
+            </div>
+
+            {selected !== null && (
+              <div style={{
+                background: selected === q.correct ? "#0d3b1a" : "#3b0d0d",
+                border: `1.5px solid ${selected === q.correct ? "#4caf50" : "#e53935"}`,
+                borderRadius:8, padding:"10px 14px",
+                color: selected === q.correct ? "#a5ffb0" : "#ffb0b0",
+                fontSize:13, marginBottom:10, fontWeight:500
+              }}>
+                {selected === q.correct ? "★ " : "✗ "}{q.feedback}
+              </div>
+            )}
+
+            {selected !== null && (
+              <button onClick={next} style={{ width:"100%", padding:"10px", background:"#f4c430", color:"#0d1b2a", border:"none", borderRadius:8, fontSize:14, fontWeight:700, cursor:"pointer" }}>
+                {current + 1 < questions.length ? "Próxima pergunta →" : "Ver resultado →"}
+              </button>
+            )}
+          </>
+        )}
+
+        {/* Game over */}
+        {done && (
+          <div style={{ background:"#0d2240", border:"2px solid #f4c430", borderRadius:12, padding:"24px 20px", textAlign:"center" }}>
+            <MariaSVG size={72}/>
+            <h2 style={{ color:"#f4c430", fontSize:20, margin:"12px 0 8px", fontFamily:"sans-serif" }}>Parabéns!</h2>
+            <p style={{ color:"#ffffff", fontSize:14, marginBottom:18, lineHeight:1.6 }}>
+              {score >= 600
+                ? `Incrível! Você é expert em marketing imobiliário com ${score} pontos! A Fuhro Souto está em boas mãos.`
+                : score >= 350
+                ? `Muito bem! Você fez ${score} pontos. Continue estudando e logo será especialista!`
+                : `Você fez ${score} pontos. Ainda há espaço pra crescer — a Maria Luiza acredita em você!`}
+            </p>
+            <button onClick={start} style={{ padding:"10px 32px", background:"#f4c430", color:"#0d1b2a", border:"none", borderRadius:8, fontSize:14, fontWeight:700, cursor:"pointer" }}>
+              Jogar novamente
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
